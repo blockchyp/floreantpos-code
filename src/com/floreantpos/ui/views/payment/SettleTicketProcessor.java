@@ -30,6 +30,8 @@ import com.floreantpos.Messages;
 import com.floreantpos.POSConstants;
 import com.floreantpos.PosException;
 import com.floreantpos.PosLog;
+import com.floreantpos.blockchyp.BlockChypPlugin;
+import com.floreantpos.blockchyp.BlockChypProcessor;
 import com.floreantpos.config.CardConfig;
 import com.floreantpos.config.TerminalConfig;
 import com.floreantpos.extension.InginicoPlugin;
@@ -299,8 +301,38 @@ public class SettleTicketProcessor implements CardInputListener {
 	private void payUsingCard(String cardName, final double tenderedAmount) throws Exception {
 		try {
 			PaymentGatewayPlugin paymentGateway = CardConfig.getPaymentGateway();
+			
+			if (paymentGateway instanceof BlockChypPlugin) {
+			    /*
+			    waitDialog.setVisible(true);
+			    if (!waitDialog.isCanceled()) {
+                    doInformListenerPaymentDone();
+                }
+                */
+			    PosTransaction transaction = paymentType.createTransaction();
+                transaction.setTicket(ticket);
 
-			if (paymentGateway instanceof InginicoPlugin) {
+                if (!confirmPayment()) {
+                    return;
+                }
+
+                transaction.setCaptured(false);
+                transaction.setCardMerchantGateway(paymentGateway.getProductName());
+
+                setTransactionAmounts(transaction);
+
+                OrderType orderType = ticket.getOrderType();
+                if (orderType.isPreAuthCreditCard()) {
+                    paymentGateway.getProcessor().preAuth(transaction);
+                }
+                else {
+                    paymentGateway.getProcessor().chargeAmount(transaction);
+                }
+                settleTicket(transaction);
+                return;
+			}
+
+			if (paymentGateway instanceof InginicoPlugin){
 				waitDialog.setVisible(true);
 				if (!waitDialog.isCanceled()) {
 					doInformListenerPaymentDone();

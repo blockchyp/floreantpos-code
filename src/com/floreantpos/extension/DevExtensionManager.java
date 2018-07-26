@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.floreantpos.blockchyp.BlockChypPlugin;
 import com.floreantpos.main.Application;
 import com.floreantpos.util.JarUtil;
 
@@ -29,31 +30,14 @@ public class DevExtensionManager {
     }
 
     public void initialize() {
-        PluginManager pluginManager = PluginManagerFactory.createPluginManager();
-
-
         try {
-            pluginManager.addPluginsFrom(new URI("classpath://*"));
-    
-           
-            PluginManagerUtil pmUtil = new PluginManagerUtil(pluginManager);
-            List<Plugin> allPlugins = (List<Plugin>) pmUtil.getPlugins();
-            
-            //sort plugins
-            java.util.Collections.sort(allPlugins, new Comparator<Plugin>() {
-                @Override
-                public int compare(Plugin o1, Plugin o2) {
-                    return o1.getClass().getName().compareToIgnoreCase(o2.getClass().getName());
-                }
-            });
             
             List<FloreantPlugin> floreantPlugins = new ArrayList<FloreantPlugin>();
             
-            for (Plugin plugin : allPlugins) {
-                if(plugin instanceof FloreantPlugin) {
-                    floreantPlugins.add((FloreantPlugin) plugin);
-                }
-            }
+            floreantPlugins.add(new MercuryGatewayPlugin());
+            floreantPlugins.add(new BlockChypPlugin());
+            floreantPlugins.add(new InginicoPlugin());
+            floreantPlugins.add(new AuthorizeNetGatewayPlugin());
             
             this.plugins = Collections.unmodifiableList(floreantPlugins);
         } catch (Exception e) {

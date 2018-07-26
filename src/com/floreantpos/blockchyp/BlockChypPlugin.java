@@ -15,7 +15,7 @@
  * * All Rights Reserved.
  * ************************************************************************
  */
-package com.floreantpos.extension;
+package com.floreantpos.blockchyp;
 
 import java.awt.Component;
 import java.util.List;
@@ -23,20 +23,20 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JDialog;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import com.floreantpos.config.ui.ConfigurationView;
-import com.floreantpos.config.ui.DefaultMerchantGatewayConfigurationView;
+import com.floreantpos.extension.PaymentGatewayPlugin;
 import com.floreantpos.model.PosTransaction;
 import com.floreantpos.model.Ticket;
 import com.floreantpos.ui.views.payment.AuthorizeDotNetProcessor;
 import com.floreantpos.ui.views.payment.CardProcessor;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 @PluginImplementation
 public class BlockChypPlugin extends PaymentGatewayPlugin {
 	public static final String ID = "BlockChyp"; //$NON-NLS-1$
 
-	protected DefaultMerchantGatewayConfigurationView view;
+	protected BlockChypConfigurationView view;
 
 	@Override
 	public boolean requireLicense() {
@@ -51,8 +51,7 @@ public class BlockChypPlugin extends PaymentGatewayPlugin {
 	@Override
 	public ConfigurationView getConfigurationPane() throws Exception {
 		if (view == null) {
-			view = new DefaultMerchantGatewayConfigurationView();
-			view.setMerchantDefaultValue("6tuU4N3H", "4k6955x3T8bCVPVm"); //$NON-NLS-1$ //$NON-NLS-2$
+			view = new BlockChypConfigurationView();
 			view.initialize();
 		}
 
@@ -91,7 +90,7 @@ public class BlockChypPlugin extends PaymentGatewayPlugin {
 
 	@Override
 	public CardProcessor getProcessor() {
-		return new AuthorizeDotNetProcessor();
+		return new BlockChypProcessor();
 	}
 
 	@Override
