@@ -27,7 +27,6 @@ import com.floreantpos.config.ui.ConfigurationView;
 import com.floreantpos.extension.PaymentGatewayPlugin;
 import com.floreantpos.model.PosTransaction;
 import com.floreantpos.model.Ticket;
-import com.floreantpos.ui.views.payment.AuthorizeDotNetProcessor;
 import com.floreantpos.ui.views.payment.CardProcessor;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;

@@ -20,7 +20,6 @@ package com.floreantpos.blockchyp;
 import java.io.File;
 
 import javax.swing.JLabel;
-import javax.swing.JPasswordField;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;

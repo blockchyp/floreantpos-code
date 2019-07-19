@@ -24,9 +24,9 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 
 import com.blockchyp.client.BlockChypClient;
-import com.blockchyp.client.GatewayCredentials;
-import com.blockchyp.client.dto.ChargeRequest;
-import com.blockchyp.client.dto.ChargeResponse;
+import com.blockchyp.client.dto.APICredentials;
+import com.blockchyp.client.dto.AuthorizationRequest;
+import com.blockchyp.client.dto.AuthorizationResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.floreantpos.config.AppConfig;
 import com.floreantpos.model.PosTransaction;
@@ -51,18 +51,20 @@ public class BlockChypProcessor implements CardProcessor {
         
         BlockChypConfiguration config = getConfiguration();
         
-        GatewayCredentials creds = new GatewayCredentials();
-        creds.setApiId(config.getApiId());
+        APICredentials creds = new APICredentials();
+        creds.setApiKey(config.getApiId());
         creds.setBearerToken(config.getBearerToken());
         creds.setSigningKey(config.getSigningKey());
         BlockChypClient client = new BlockChypClient(config.getGatewayHost(), creds);
         
-        ChargeRequest request = new ChargeRequest();
+        AuthorizationRequest request = new AuthorizationRequest();
         
         NumberFormat fmt = new DecimalFormat("#0.00");
         
         request.setAmount(fmt.format(transaction.calculateAuthorizeAmount()));
-        ChargeResponse response = client.charge(config.getDefaultTerminalName(), request);
+        request.setTerminalName(transaction.getTerminal().getName());
+        
+        AuthorizationResponse response = client.charge(request);
 
         if (response.isApproved()) {
             transaction.setCaptured(true);
